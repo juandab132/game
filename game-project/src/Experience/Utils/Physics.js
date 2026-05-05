@@ -1,4 +1,3 @@
-// Experience/Utils/Physics.js
 import * as CANNON from 'cannon-es'
 
 export default class Physics {
@@ -6,78 +5,44 @@ export default class Physics {
         this.world = new CANNON.World()
         this.world.gravity.set(0, -9.82, 0)
         this.world.broadphase = new CANNON.SAPBroadphase(this.world)
-        this.world.allowSleep = true
+        
+        // CAMBIO: Desactivamos allowSleep temporalmente para evitar que el robot flote por error de inactividad
+        this.world.allowSleep = false 
 
         this.defaultMaterial = new CANNON.Material('default')
+        this.robotMaterial = new CANNON.Material('robot')
+        this.obstacleMaterial = new CANNON.Material('obstacle')
+
         const defaultContact = new CANNON.ContactMaterial(
             this.defaultMaterial,
             this.defaultMaterial,
-            {
-                friction: 0.4,
-                restitution: 0.0
-            }
+            { friction: 0.4, restitution: 0.0 }
         )
         this.world.defaultContactMaterial = defaultContact
-        this.world.addContactMaterial(defaultContact)
 
-        this.robotMaterial = new CANNON.Material('robot')
-        this.obstacleMaterial = new CANNON.Material('obstacle')
-        this.wallMaterial = new CANNON.Material('wall')
-
+        // Contacto Robot vs Escenario (Crucial para que no resbale y avance)
         const robotObstacleContact = new CANNON.ContactMaterial(
             this.robotMaterial,
             this.obstacleMaterial,
             {
-                friction: 0.6,
+                friction: 0.9,
                 restitution: 0.0,
-                contactEquationStiffness: 1e9,
-                contactEquationRelaxation: 3,
-                frictionEquationStiffness: 1e7,
-                frictionEquationRelaxation: 3
+                contactEquationStiffness: 1e7, // Bajamos un poco la rigidez para que no rebote
+                contactEquationRelaxation: 5,  // Más relajación evita que el motor de física "explote" al tocar el Trimesh
+                frictionEquationStiffness: 1e6,
+                frictionEquationRelaxation: 5
             }
         )
         this.world.addContactMaterial(robotObstacleContact)
-
-        const robotWallContact = new CANNON.ContactMaterial(
-            this.robotMaterial,
-            this.wallMaterial,
-            {
-                friction: 0.6,
-                restitution: 0.0,
-                contactEquationStiffness: 1e9,
-                contactEquationRelaxation: 2,
-                frictionEquationStiffness: 1e7,
-                frictionEquationRelaxation: 2
-            }
-        )
-        this.world.addContactMaterial(robotWallContact)
     }
 
     update(delta) {
-        // 💣 Limpia cualquier shape corrupto o desconectado
-        this.world.bodies = this.world.bodies.filter(body => {
-            if (!body || !Array.isArray(body.shapes) || body.shapes.length === 0) return false
-
-            for (const shape of body.shapes) {
-                if (!shape || !shape.body || shape.body !== body) return false
-            }
-
-            return true
-        })
-
-        // ✅ Intenta avanzar la simulación sin romper
+        // Quitamos el filtro manual de cuerpos porque corrompe el broadphase de Cannon
         try {
+            // Usamos un step fijo de 1/60 para que la física sea estable
             this.world.step(1 / 60, delta, 3)
         } catch (err) {
-            // Silenciar solo el error exacto de wakeUpAfterNarrowphase
-            if (err?.message?.includes('wakeUpAfterNarrowphase')) {
-                console.warn('⚠️ Cannon encontró un shape corrupto residual. Ignorado.')
-            } else {
-                console.error('🚫 Cannon step error:', err)
-            }
+            console.error('🚫 Cannon step error:', err)
         }
     }
-
-
-
 }

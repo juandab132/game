@@ -1,25 +1,37 @@
-require('dotenv').config()
-const mongoose = require('mongoose')
-const Block = require('./models/Block')
+const mongoose = require('mongoose');
+const mongoURI = 'mongodb://localhost:27017/Juanproyect'; // Base de datos correcta
 
-const positions = [
-    { x: 3.97, y: 0.5, z: 1.93 },
-    { x: -0.25, y: 0.5, z: -2.79 },
-]
+const blockSchema = new mongoose.Schema({
+    modelName: String,
+    position: { x: Number, y: Number, z: Number },
+    role: { type: String, default: 'obstacle' }, // Para diferenciar monedas de paredes
+    level: Number
+});
 
-async function seedDatabase() {
+const Block = mongoose.model('Block', blockSchema);
+
+const seedData = [
+    // MONEDAS: Asegúrate que el modelName coincida con tu cargador de recursos
+    { modelName: 'coin', position: { x: 5, y: 1, z: 5 }, role: 'default', level: 1 },
+    { modelName: 'coin', position: { x: -5, y: 1, z: 10 }, role: 'default', level: 1 },
+    { modelName: 'coin', position: { x: 0, y: 1, z: -5 }, role: 'default', level: 1 },
+    { modelName: 'coin', position: { x: 10, y: 1, z: 0 }, role: 'default', level: 1 },
+    { modelName: 'coin', position: { x: -8, y: 1, z: -8 }, role: 'default', level: 1 },
+    
+    // PORTAL
+    { modelName: 'portal', position: { x: 0, y: 1, z: 20 }, role: 'finalPrize', level: 1 }
+];
+
+async function seedDB() {
     try {
-        await mongoose.connect(process.env.MONGO_URI)
-
-        await Block.deleteMany() // (opcional) limpia la colección
-        await Block.insertMany(positions)
-
-        console.log('📦 Datos insertados correctamente en MongoDB')
-        process.exit()
+        await mongoose.connect(mongoURI);
+        await Block.deleteMany({}); 
+        await Block.insertMany(seedData);
+        console.log("✅ DB sincronizada con monedas y portal.");
+        process.exit();
     } catch (err) {
-        console.error('❌ Error al insertar datos:', err)
-        process.exit(1)
+        console.error("❌ Error:", err);
+        process.exit(1);
     }
 }
-
-seedDatabase()
+seedDB();

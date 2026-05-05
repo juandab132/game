@@ -1,15 +1,22 @@
 import * as CANNON from 'cannon-es'
 import * as THREE from 'three'
 
-export function createBoxShapeFromModel(model, scaleFactor = 0.6) { //reducir un poco el tamaño de la caja helps debug
+/**
+ * Crea una caja de colisión basada en el tamaño real del modelo.
+ * @param {THREE.Object3D} model - El modelo 3D.
+ * @param {number} scaleFactor - Ajuste de margen (1.0 = tamaño exacto).
+ */
+export function createBoxShapeFromModel(model, scaleFactor = 0.95) {
     const bbox = new THREE.Box3().setFromObject(model)
     const size = new THREE.Vector3()
     bbox.getSize(size)
 
+    // Cannon-es usa 'halfExtents', por eso dividimos el tamaño total entre 2.
+    // Aplicamos el scaleFactor para dar un pequeño margen de error.
     return new CANNON.Box(new CANNON.Vec3(
-        (size.x / 2), //* scaleFactor,
-        (size.y / 2), // * scaleFactor,
-        (size.z / 2), // * scaleFactor
+        (size.x / 2) * scaleFactor,
+        (size.y / 2) * scaleFactor,
+        (size.z / 2) * scaleFactor
     ))
 }
 
@@ -18,7 +25,7 @@ export function createTrimeshShapeFromModel(model) {
     const mergedIndices = []
     let vertexOffset = 0
 
-    model.updateMatrixWorld(true) // ✅ Asegura matrices actualizadas
+    model.updateMatrixWorld(true) 
 
     model.traverse((child) => {
         if (child.isMesh && child.geometry) {
@@ -31,7 +38,7 @@ export function createTrimeshShapeFromModel(model) {
 
             for (let i = 0; i < vertexCount; i++) {
                 const vertex = new THREE.Vector3().fromBufferAttribute(position, i)
-                vertex.applyMatrix4(child.matrixWorld) // ✅ Aplica transformación del mesh
+                vertex.applyMatrix4(child.matrixWorld) 
                 mergedPositions.push(vertex.x, vertex.y, vertex.z)
             }
 
@@ -55,10 +62,7 @@ export function createTrimeshShapeFromModel(model) {
     const vertices = new Float32Array(mergedPositions)
     const indices = new Uint16Array(mergedIndices)
 
-    //console.log(`✅ Trimesh generado: ${vertices.length / 3} vértices`)
-
     return new CANNON.Trimesh(vertices, indices)
 }
-
 
 
