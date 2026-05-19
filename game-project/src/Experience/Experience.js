@@ -356,38 +356,34 @@ export default class Experience {
 
 
   resetGameToFirstLevel() {
-    console.log('♻️ Reiniciando al nivel');
+    console.log('♻️ Reiniciando al nivel 1')
 
-    // 💀 Destruir enemigo previo si existe
+    // Limpiar enemigos
     if (Array.isArray(this.world.enemies)) {
       this.world.enemies.forEach(e => e?.destroy?.())
       this.world.enemies = []
-    } else {
-      this.world.enemy?.destroy()
-      this.world.enemy = null
     }
 
-    // Resetear variables de World
-    this.world.points = 0;
-    this.world.robot.points = 0;
-    this.world.loader.prizes = [];
-    this.world.defeatTriggered = false
+    // Resetear variables
+    this.world.totalPoints    = 0
+    this.world.collectedCoins = 0
+    this.world.currentLevel   = 1
+    this.world.isGameOver     = false
+    this.world.gameStarted    = true   // ← mantener iniciado
 
-    // Resetear nivel actual
-    this.world.levelManager.currentLevel = 1;
+    // Limpiar HUD viejo del DOM
+    const hud = document.getElementById('hud-container')
+    if (hud) hud.remove()
 
-    // Limpiar la escena
-    this.world.clearCurrentScene();
+    // Limpiar escena
+    this.world.clearCurrentScene()
 
-    // Cargar nivel 1 de nuevo
-    this.world.loadLevel(1);
-
-    // Reiniciar el seguimiento de tiempo
-    this.tracker.destroy(); // Detener el loop anterior
-    this.tracker = new GameTracker({ modal: this.modal, menu: this.menu });
-    this.tracker.start();
-
-    console.log('✅ Juego reiniciado en nivel 1.');
+    // Cargar nivel 1
+    this.world.loadLevel(1).then(() => {
+      // Respawnear enemigos
+      this.world.spawnEnemies(4)
+      console.log('✅ Juego reiniciado')
+    })
   }
 
 

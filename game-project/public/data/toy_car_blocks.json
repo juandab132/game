@@ -2,13 +2,47 @@
     {
         "level": 1,
         "blocks": [
-            {
-                "model": "models/escenario_completo.glb",
-                "position": { "x": 0, "y": 0, "z": 0 },
-                "scale": { "x": 0.5, "y": 0.5, "z": 0.5 }, 
-                "type": "mapa"
-            }
+            { "name": "terreno_lev1",                "x": 0.0,    "y": 0.0,  "z": 0.0,    "role": "mapa"     },
+
+            { "name": "corridor_lev1",               "x": 7.89,   "y": 0.0,  "z": 1.36,   "role": "obstacle" },
+            { "name": "corridor_cross_lev1",         "x": 7.90,   "y": 0.0,  "z": -8.25,  "role": "obstacle" },
+            { "name": "corridor_roof_lev1",          "x": -5.31,  "y": 0.0,  "z": -8.72,  "role": "obstacle" },
+            { "name": "craft_cargoa_lev1",           "x": 3.33,   "y": 0.0,  "z": 6.78,   "role": "obstacle" },
+            { "name": "craft_cargob_lev1",           "x": 0.99,   "y": 0.0,  "z": 6.98,   "role": "obstacle" },
+            { "name": "craft_miner_lev1",            "x": 6.25,   "y": 0.0,  "z": -5.32,  "role": "obstacle" },
+            { "name": "craft_racer_lev1",            "x": 2.34,   "y": 0.0,  "z": -3.80,  "role": "obstacle" },
+            { "name": "craft_speedera_lev1",         "x": 5.64,   "y": 0.0,  "z": 6.86,   "role": "obstacle" },
+            { "name": "craft_speederb_lev1",         "x": -5.67,  "y": 0.0,  "z": 6.69,   "role": "obstacle" },
+            { "name": "craft_speederc_lev1",         "x": 8.08,   "y": 0.0,  "z": -2.79,  "role": "obstacle" },
+            { "name": "craft_speederd_lev1",         "x": 0.37,   "y": 0.0,  "z": -8.32,  "role": "obstacle" },
+            { "name": "hangar_largeb_lev1",          "x": -8.46,  "y": 0.0,  "z": 1.37,   "role": "obstacle" },
+            { "name": "hangar_rounda_lev1",          "x": -8.28,  "y": 0.0,  "z": 6.20,   "role": "obstacle" },
+            { "name": "hangar_roundglass_lev1",      "x": -1.83,  "y": 0.0,  "z": 7.14,   "role": "obstacle" },
+            { "name": "machine_generatorlarge_lev1", "x": -7.52,  "y": 0.0,  "z": -7.66,  "role": "obstacle" },
+            { "name": "monorail_traincargo_lev1",    "x": 8.15,   "y": 0.0,  "z": 6.21,   "role": "obstacle" },
+            { "name": "pipe_cross_lev1",             "x": -8.92,  "y": 0.0,  "z": -5.20,  "role": "obstacle" },
+            { "name": "pipe_ramplarge_lev1",         "x": -7.62,  "y": 0.0,  "z": -3.56,  "role": "obstacle" },
+            { "name": "pipe_rampsmall_lev1",         "x": -8.48,  "y": 0.0,  "z": 3.29,   "role": "obstacle" },
+            { "name": "platform_high_lev1",          "x": -5.41,  "y": 0.0,  "z": -3.18,  "role": "obstacle" },
+            { "name": "rocket_basea_lev1",           "x": -2.0,   "y": 0.0,  "z": -3.26,  "role": "obstacle" },
+            { "name": "rocket_baseb_lev1",           "x": -3.67,  "y": 0.0,  "z": 2.11,   "role": "obstacle" },
+            { "name": "rocket_fuela_lev1",           "x": -4.67,  "y": 0.0,  "z": -0.90,  "role": "obstacle" },
+            { "name": "structure_lev1",              "x": -4.79,  "y": 0.0,  "z": -0.86,  "role": "obstacle" },
+            { "name": "supports_high_lev1",          "x": -6.24,  "y": 0.0,  "z": 4.12,   "role": "obstacle" },
+            { "name": "hangar_roundb.036_lev1",      "x": -9.08,  "y": 0.0,  "z": 4.31,   "role": "obstacle" },
+            { "name": "barrel_lev1",                 "x": 2.0,    "y": 0.0,  "z": 1.5,    "role": "obstacle" },
+            { "name": "barrel.003_lev1",             "x": 2.125,  "y": 0.0,  "z": 1.61,   "role": "obstacle" },
+            { "name": "barrel.004_lev1",             "x": 2.125,  "y": 0.0,  "z": 1.39,   "role": "obstacle" },
+            { "name": "barrel.005_lev1",             "x": 5.32,   "y": 0.0,  "z": -3.32,  "role": "obstacle" },
+
+            { "name": "coin",   "x": 3.33,  "y": 1.5,  "z": 6.78,  "role": "default"    },
+            { "name": "coin",   "x": -5.67, "y": 1.5,  "z": 6.69,  "role": "default"    },
+            { "name": "coin",   "x": 6.25,  "y": 1.5,  "z": -5.32, "role": "default"    },
+            { "name": "coin",   "x": -8.28, "y": 1.5,  "z": 6.20,  "role": "default"    },
+            { "name": "coin",   "x": -2.0,  "y": 1.5,  "z": -3.26, "role": "default"    },
+
+            { "name": "portal", "x": 0.0,   "y": 1.0,  "z": -8.0,  "role": "finalPrize" }
         ],
-        "spawnPoint": { "x": 0, "y": 20, "z": 0 }
+        "spawnPoint": { "x": 0, "y": 3, "z": 0 }
     }
 ]

@@ -1,42 +1,40 @@
 import * as THREE from 'three'
-import isMobileDevice from '../Utils/Device.js' // Asegúrate de que exista esta función
 
 export default class ThirdPersonCamera {
     constructor(experience, target) {
         this.experience = experience
-        this.camera = experience.camera.instance
-        this.target = target
-
-        const isMobile = isMobileDevice()
-
-        // Distancia y altura adaptada
-        this.offset = isMobile
-            ? new THREE.Vector3(0, 3.5, -7)  // móvil: más alto y atrás
-            : new THREE.Vector3(0, 2.5, -5)
-
-        // Fijar altura para evitar sacudidas
-        this.fixedY = isMobile ? 3.5 : 2.5
+        this.camera     = experience.camera.instance
+        this.target     = target  // this.robot.group
+        this._initialized = false
     }
 
     update() {
         if (!this.target) return
 
-        const basePosition = this.target.position.clone()
+        const pos = this.target.position   // posición del robot
 
-        // Dirección del robot
-        const direction = new THREE.Vector3(0, 0, 1).applyEuler(this.target.rotation).normalize()
+        // Dirección que mira el robot en el plano XZ
+        const angle  = this.target.rotation.y
+        const sinA   = Math.sin(angle)
+        const cosA   = Math.cos(angle)
 
-        // Fijar cámara a una altura constante (no sigue saltos ni choques verticales)
-        const cameraPosition = new THREE.Vector3(
-            basePosition.x + direction.x * this.offset.z,
-            this.fixedY,
-            basePosition.z + direction.z * this.offset.z
-        )
+        // Cámara: 10 unidades DETRÁS del robot (dirección opuesta al frente)
+        // y 6 unidades ARRIBA
+        const camX = pos.x - sinA * 10
+        const camY = pos.y + 6
+        const camZ = pos.z - cosA * 10
 
-        this.camera.position.lerp(cameraPosition, 0.15)
+        if (!this._initialized) {
+            // Primera vez: posición instantánea sin lerp
+            this.camera.position.set(camX, camY, camZ)
+            this._initialized = true
+        } else {
+            this.camera.position.x += (camX - this.camera.position.x) * 0.1
+            this.camera.position.y += (camY - this.camera.position.y) * 0.1
+            this.camera.position.z += (camZ - this.camera.position.z) * 0.1
+        }
 
-        // Siempre mirar al centro del robot (con altura fija)
-        const lookAt = basePosition.clone().add(new THREE.Vector3(0, 1.2, 0))
-        this.camera.lookAt(lookAt)
+        // Mirar al robot con offset vertical para ver bien al personaje
+        this.camera.lookAt(pos.x, pos.y + 1.5, pos.z)
     }
 }
